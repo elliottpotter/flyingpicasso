@@ -1,0 +1,19 @@
+
+development:
+  cloud_name: linq
+  api_key: '966587883827855'
+  api_secret: 7lD5elvZ01HCy1yGOtSO6pU6mWY
+  enhance_image_tag: true
+  static_file_support: false
+production:
+  cloud_name: linq
+  api_key: '966587883827855'
+  api_secret: 7lD5elvZ01HCy1yGOtSO6pU6mWY
+  enhance_image_tag: true
+  static_file_support: true
+test:
+  cloud_name: linq
+  api_key: '966587883827855'
+  api_secret: 7lD5elvZ01HCy1yGOtSO6pU6mWY
+  enhance_image_tag: true
+  static_file_support: false
