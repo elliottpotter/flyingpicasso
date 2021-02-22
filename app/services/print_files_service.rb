@@ -56,7 +56,7 @@ class PrintFilesService
       }
 
       headers  = { "Content-Type": "application/json" }
-      response = Faraday.post('https://hooks.zapier.com/hooks/catch/5011016/opvru9o', data.to_json, headers)
+      response = Faraday.post('https://hooks.zapier.com/hooks/catch/5011016/opvnyex/', data.to_json, headers)
       puts "Order ids: #{order_ids} == #{response.body}"
     end
   end
