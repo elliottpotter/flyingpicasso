@@ -47,15 +47,16 @@ class PrintFilesService
         }
       end
 
-      raw_print_file_urls << Cloudinary::Utils.cloudinary_url(BASE_IMAGE, transformation: transformations)
-      raw_print_file_urls.each do |raw_url|
-        image = Cloudinary::Uploader.upload(raw_url, folder: "printfiles", public_id: final_filename, attachment: true)
-        @print_file_data << {
-          image_url: image['url'],
-          order_ids: order_ids,
-          item_sku: item_sku
-        }
-      end
+      raw_url = Cloudinary::Utils.cloudinary_url(BASE_IMAGE, transformation: transformations)
+      image   = Cloudinary::Uploader.upload(raw_url, folder: "printfiles", public_id: final_filename, attachment: true)
+      data = {
+        image_url: image['url'],
+        order_ids: order_ids,
+        item_sku: item_sku
+      }
+
+      headers  = { "Content-Type": "application/json" }
+      response = Faraday.post('https://hooks.zapier.com/hooks/catch/5011016/opvru9o', data.to_json, headers)
     end
   end
 
