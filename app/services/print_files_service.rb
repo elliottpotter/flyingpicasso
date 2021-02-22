@@ -32,7 +32,7 @@ class PrintFilesService
       item_map       = SHEET_ITEM_MAP[item_sku]
       these_n_images = filtered_rows.shift(item_map[:qty_per_sheet])
       order_ids      = these_n_images.map {|row| row[:order_id] }.uniq.sort.join(', ')
-      final_filename = these_n_images.map {|row| "#{row[:order_id]}-(#{row[:quantity]})"}.uniq.sort.join('_')
+      final_filename = these_n_images.map {|row| "#{row[:order_id]}-(#{these_n_images.select{|r| r[:order_id] == row[:order_id] }.count})"}.uniq.sort.join('_')
 
       transformations = these_n_images.each_with_index.collect do |image_data, index|
         base_64_image_url = Base64.encode64(image_data[:image_url]).gsub("\n", '')
