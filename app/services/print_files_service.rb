@@ -43,7 +43,7 @@ class PrintFilesService
           width: (item_map[:image_width] * BASE_MULTIPLE).to_i,
           x: (position_map[(index + 1).to_s][:x] * BASE_MULTIPLE).to_i,
           y: (position_map[(index + 1).to_s][:y] * BASE_MULTIPLE).to_i,
-          # quality: 100,
+          quality: 100,
           gravity: 'north_west'
         }
       end
