@@ -58,8 +58,9 @@ class PrintFilesService
       }
     end
 
+    threads = []
     raw_print_file_urls.each do |data|
-      Ractor.new do
+      threads << Thread.new do
         image = Cloudinary::Uploader.upload(data[:url], folder: "printfiles", public_id: data[:filename], attachment: true)
         
         webhook_data = {
@@ -73,6 +74,8 @@ class PrintFilesService
         puts "Order ids: #{data[:order_ids]} == #{response.status}"
       end
     end
+    
+    threads.each { |aThread| aThread.join }
   end
 
   def filter_rows
