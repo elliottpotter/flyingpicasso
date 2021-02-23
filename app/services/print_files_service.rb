@@ -48,23 +48,30 @@ class PrintFilesService
         }
       end
 
-      r = Ractor.new do
-        data    = receive
-        raw_url = Cloudinary::Utils.cloudinary_url(BASE_IMAGE, transformation: data[:transformations])
-        image   = Cloudinary::Uploader.upload(raw_url, folder: "printfiles", public_id: data[:final_filename], attachment: true)
+      raw_url = Cloudinary::Utils.cloudinary_url(BASE_IMAGE, transformation: transformations)
+
+      raw_print_file_urls << { 
+        filename: final_filename, 
+        url: raw_url,
+        order_ids: order_ids,
+        item_sku: item_sku 
+      }
+    end
+
+    raw_print_file_urls.each do |data|
+      Ractor.new do
+        image = Cloudinary::Uploader.upload(data[:url], folder: "printfiles", public_id: data[:filename], attachment: true)
         
-        data = {
+        webhook_data = {
           image_url: image['url'],
-          order_ids: order_ids,
-          item_sku: item_sku
+          order_ids: data[:order_ids],
+          item_sku: data[:item_sku]
         }
 
         headers  = { "Content-Type": "application/json" }
-        response = Faraday.post('https://hooks.zapier.com/hooks/catch/5011016/opvnyex/', data.to_json, headers)
-        puts "Order ids: #{order_ids} == #{response.status}"
+        response = Faraday.post('https://hooks.zapier.com/hooks/catch/5011016/opvnyex/', webhook_data.to_json, headers)
+        puts "Order ids: #{data[:order_ids]} == #{response.status}"
       end
-
-      r.send({transformations: transformations, final_filename: final_filename})
     end
   end
 
