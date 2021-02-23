@@ -43,7 +43,6 @@ class PrintFilesService
           width: (item_map[:image_width] * BASE_MULTIPLE).to_i,
           x: (position_map[(index + 1).to_s][:x] * BASE_MULTIPLE).to_i,
           y: (position_map[(index + 1).to_s][:y] * BASE_MULTIPLE).to_i,
-          quality: 100,
           gravity: 'north_west'
         }
       end
@@ -61,7 +60,7 @@ class PrintFilesService
     threads = []
     raw_print_file_urls.each do |data|
       threads << Thread.new do
-        image = Cloudinary::Uploader.upload(data[:url], folder: "printfiles", public_id: data[:filename], attachment: true)
+        image = Cloudinary::Uploader.upload(data[:url], folder: "printfiles", public_id: data[:filename], attachment: true, timeout: 120)
         
         webhook_data = {
           image_url: image['url'],
