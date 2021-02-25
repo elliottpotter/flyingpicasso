@@ -10,6 +10,7 @@ class PrintFilesService
   SHEET_ITEM_MAP = { 
     'CUS' => {item_name: 'cards', image_width: 0.375, qty_per_sheet: 8},
     'CUS - BAM' => {item_name: 'cards', image_width: 0.375, qty_per_sheet: 8}, 
+    'CUS-PVC-WHT-LFT' => {item_name: 'cards', image_width: 0.375, qty_per_sheet: 8}, 
     'CUS-Tap-WHT' => {item_name: 'taps', image_width: 0.300, qty_per_sheet: 16} 
   }
 
@@ -60,7 +61,7 @@ class PrintFilesService
     threads = []
     raw_print_file_urls.each do |data|
       threads << Thread.new do
-        image = Cloudinary::Uploader.upload(data[:url], folder: "printfiles", public_id: data[:filename], attachment: true, timeout: 120)
+        image = Cloudinary::Uploader.upload(data[:url], folder: "printfiles", public_id: data[:filename], attachment: true, timeout: 180)
         
         webhook_data = {
           image_url: image['url'],
@@ -97,14 +98,14 @@ class PrintFilesService
 
   def cards_position_map
     {
-      '1' => {x: 0.185, y: 0.215},
-      '2' => {x: 1.155, y: 0.215},
-      '3' => {x: 0.185, y: 0.865},
-      '4' => {x: 1.155, y: 0.865},
-      '5' => {x: 0.185, y: 1.515},
-      '6' => {x: 1.155, y: 1.515},
-      '7' => {x: 0.185, y: 2.165},
-      '8' => {x: 1.155, y: 2.165},
+      '1' => {x: 0.24, y: 0.22},
+      '2' => {x: 1.21, y: 0.22},
+      '3' => {x: 0.24, y: 0.885},
+      '4' => {x: 1.21, y: 0.885},
+      '5' => {x: 0.24, y: 1.55},
+      '6' => {x: 1.21, y: 1.55},
+      '7' => {x: 0.24, y: 2.215},
+      '8' => {x: 1.21, y: 2.215},
     }
   end
 
