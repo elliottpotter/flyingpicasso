@@ -11,6 +11,7 @@ class PrintFilesService
     'CUS' => {item_name: 'cards', image_width: 0.375, qty_per_sheet: 8},
     'CUS - BAM' => {item_name: 'cards', image_width: 0.375, qty_per_sheet: 8}, 
     'CUS-PVC-WHT-LFT' => {item_name: 'cards', image_width: 0.375, qty_per_sheet: 8}, 
+    'CUS-PVC-BLK' => {item_name: 'cards', image_width: 0.375, qty_per_sheet: 8}, 
     'CUS-Tap-WHT' => {item_name: 'taps', image_width: 0.300, qty_per_sheet: 16} 
   }
 
