@@ -49,13 +49,33 @@ class PrintFilesService
         }
       end
 
+      with_order_id_transformations = these_n_images.each_with_index.collect do |image_data, index|
+        base_64_image_url = Base64.encode64(image_data[:image_url]).gsub("\n", '')
+        position_map = send("#{item_map[:item_name]}_position_map".to_sym)
+
+        {
+          overlay: {
+            font_family: "Roboto", 
+            font_size: 40, 
+            font_weight: "bold", 
+            text: item_map[:order_id]
+          },
+          width: (item_map[:image_width] * BASE_MULTIPLE).to_i,
+          x: (position_map[(index + 1).to_s][:x] * BASE_MULTIPLE).to_i,
+          y: (position_map[(index + 1).to_s][:y] - (position_map[(index + 1).to_s][:y] * 0.1) * BASE_MULTIPLE).to_i,
+          gravity: 'north_west'
+        }
+      end
+
       raw_url = Cloudinary::Utils.cloudinary_url(BASE_IMAGE, transformation: transformations)
+      raw_with_order_ids_url = Cloudinary::Utils.cloudinary_url(BASE_IMAGE, transformation: with_order_id_transformations)
 
       raw_print_file_urls << { 
         filename: final_filename, 
         url: raw_url,
         order_ids: order_ids,
-        item_sku: item_sku 
+        item_sku: item_sku,
+        raw_with_order_ids_url: raw_with_order_ids_url
       }
     end
 
@@ -86,9 +106,9 @@ class PrintFilesService
 
       filtered_row = {
         quantity: quantity,
-        order_id: spreadsheet_row[5],
-        item_sku: spreadsheet_row[7],
-        image_url: spreadsheet_row[8]
+        order_id: spreadsheet_row[1],
+        item_sku: spreadsheet_row[5],
+        image_url: spreadsheet_row[6]
       }
 
       quantity.times { rows << filtered_row }
