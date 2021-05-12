@@ -53,22 +53,29 @@ class PrintFilesService
         base_64_image_url = Base64.encode64(image_data[:image_url]).gsub("\n", '')
         position_map = send("#{item_map[:item_name]}_position_map".to_sym)
 
-        {
+        [{
           overlay: {
             font_family: "Roboto", 
-            font_size: 40, 
+            font_size: 60, 
             font_weight: "bold", 
-            text: item_map[:order_id]
+            text: image_data[:order_id].to_s
           },
+          width: ((item_map[:image_width] / 3) * BASE_MULTIPLE).to_i,
+          x: (position_map[(index + 1).to_s][:x] * BASE_MULTIPLE).to_i,
+          y: ((position_map[(index + 1).to_s][:y] * BASE_MULTIPLE) - (0.1 * BASE_MULTIPLE)).to_i,
+          gravity: 'north_west'
+        },
+        {
+          overlay: "fetch:#{base_64_image_url}",
           width: (item_map[:image_width] * BASE_MULTIPLE).to_i,
           x: (position_map[(index + 1).to_s][:x] * BASE_MULTIPLE).to_i,
-          y: (position_map[(index + 1).to_s][:y] - (position_map[(index + 1).to_s][:y] * 0.1) * BASE_MULTIPLE).to_i,
+          y: (position_map[(index + 1).to_s][:y] * BASE_MULTIPLE).to_i,
           gravity: 'north_west'
-        }
-      end
+        }]
+      end      
 
       raw_url = Cloudinary::Utils.cloudinary_url(BASE_IMAGE, transformation: transformations)
-      raw_with_order_ids_url = Cloudinary::Utils.cloudinary_url(BASE_IMAGE, transformation: with_order_id_transformations)
+      raw_with_order_ids_url = Cloudinary::Utils.cloudinary_url(BASE_IMAGE, transformation: with_order_id_transformations.flatten)
 
       raw_print_file_urls << { 
         filename: final_filename, 
@@ -83,9 +90,11 @@ class PrintFilesService
     raw_print_file_urls.each do |data|
       threads << Thread.new do
         image = Cloudinary::Uploader.upload(data[:url], folder: "printfiles", public_id: data[:filename], attachment: true, timeout: 180)
+        image_with_order_ids = Cloudinary::Uploader.upload(data[:raw_with_order_ids_url], folder: "printfiles", public_id: "#{data[:filename]}_with_ids_#{rand(0..1000)}", attachment: true, timeout: 180)
         
         webhook_data = {
           image_url: image['url'],
+          image_with_order_ids_url: image_with_order_ids['url'],
           order_ids: data[:order_ids],
           item_sku: data[:item_sku]
         }
