@@ -86,7 +86,7 @@ class PrintFilesService
             overlay: "fetch:#{base_64_image_url}",
             effect: 'colorize:100',
             color: '#000000',
-            background_removal: 'cloudinary_ai',
+            # background_removal: 'cloudinary_ai',
             width: (item_map[:image_width] * BASE_MULTIPLE).to_i,
             x: (position_map[(index + 1).to_s][:x] * BASE_MULTIPLE).to_i,
             y: (position_map[(index + 1).to_s][:y] * BASE_MULTIPLE).to_i,
@@ -116,7 +116,7 @@ class PrintFilesService
       threads << Thread.new do
         image = Cloudinary::Uploader.upload(data[:url], folder: "printfiles", public_id: data[:filename], attachment: true, timeout: 180)
         image_with_order_ids = Cloudinary::Uploader.upload(data[:raw_with_order_ids_url], folder: "printfiles", public_id: "#{data[:filename]}_with_ids_#{rand(0..1000)}", attachment: true, timeout: 180)
-        image_with_inversions = Cloudinary::Uploader.upload(data[:raw_with_inversions_url], folder: "printfiles", public_id: "#{data[:filename]}_with_inversions_#{rand(0..1000)}", attachment: true, timeout: 180)
+        image_with_inversions = Cloudinary::Uploader.upload(data[:raw_with_inversions_url], folder: "printfiles", public_id: "#{data[:filename]}_with_inversions_#{rand(0..1000)}", attachment: true, timeout: 180) if item_sku == 'CUS-PVC-BLK' 
 
         webhook_data = {
           image_url: image['url'],
@@ -124,7 +124,7 @@ class PrintFilesService
           order_ids: data[:order_ids],
           item_sku: data[:item_sku],
           original_image_urls: data[:original_image_urls],
-          raw_with_inversions_url: image_with_inversions['url']
+          raw_with_inversions_url: item_sku == 'CUS-PVC-BLK' ? image_with_inversions['url'] : nil
         }
 
         headers  = { "Content-Type": "application/json" }
